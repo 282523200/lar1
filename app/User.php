@@ -5,6 +5,7 @@ namespace App;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Str;
 
 class User extends Authenticatable
 {
@@ -28,5 +29,28 @@ class User extends Authenticatable
     {
         $hash = md5(strtolower(trim($this->attributes['email'])));
         return "http://www.gravatar.com/avatar/$hash?s=$size";
+    }
+
+    //模型启动时触发
+    public static function boot()
+    {
+        parent::boot();
+
+        //插入数据库时的事件
+        static::creating(function ($user) {
+            $user->activation_token = Str::random(10);
+        });
+    }
+    //模型绑定到status模型
+    public function statuses()
+    {
+        return $this->hasMany(Status::class);
+    }
+    
+    //获取该user发布过的所有微博
+    public function feed()
+    {
+        return $this->statuses()
+                    ->orderBy('created_at', 'desc');
     }
 }

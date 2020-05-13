@@ -22,3 +22,18 @@ Route::delete('/users/{user}', 'UsersController@destroy')->name('users.destroy')
 Route::get('login', 'SessionsController@create')->name('login');
 Route::post('login', 'SessionsController@store')->name('login');
 Route::delete('logout', 'SessionsController@destroy')->name('logout');
+
+//mail 激活
+Route::get('signup/confirm/{token}', 'UsersController@confirmEmail')->name('confirm_email');
+
+
+//密码忘记(需要邮件)重置
+Route::get('password/reset', 'Auth\ForgotPasswordController@showLinkRequestForm')->name('password.request');
+Route::post('password/email', 'Auth\ForgotPasswordController@sendResetLinkEmail')->name('password.email');
+//密码更新(已知原密码)
+Route::get('password/reset/{token}', 'Auth\ResetPasswordController@showResetForm')->name('password.reset');
+Route::post('password/reset', 'Auth\ResetPasswordController@reset')->name('password.update');
+
+//微博
+//只能添加和删除
+Route::resource('statuses', 'StatusesController', ['only' => ['store', 'destroy']]);

@@ -21,7 +21,12 @@ class CreateUsersTable extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
+            //管理员
             $table->boolean('is_admin')->default(false);
+            //邮箱验证token
+            $table->string('activation_token')->nullable();
+            //邮箱激活
+            $table->boolean('activated')->default(false);
             //创建了一个 created_at 和一个 updated_at 字段
             $table->timestamps();
         });
