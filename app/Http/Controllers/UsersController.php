@@ -9,11 +9,13 @@ use Mail;
 
 class UsersController extends Controller
 {
+    
     public function __construct()
     {
+        
         $this->middleware('auth', [
             //除了show create store 其他要auth(登录)
-            'except' => ['show', 'create', 'store','index','confirmEmail']
+            'except' => ['show', 'create', 'store', 'index', 'confirmEmail']
         ]);
         $this->middleware('guest', [
             'only' => ['create']
@@ -23,10 +25,11 @@ class UsersController extends Controller
     //用户s的列表
     public function index()
     {
-        $users = User::paginate(8);
+        //$users = User::paginate(8);
+        $users = DB::table('users')->get();
         return view('users.index', compact('users'));
     }
-    
+
     public function create()
     {
         return view('users.create');
@@ -118,7 +121,7 @@ class UsersController extends Controller
 
         Mail::send($view, $data, function ($message) use ($to, $subject) {
             $message->to($to)
-                    ->subject($subject);
+                ->subject($subject);
         });
     }
 }

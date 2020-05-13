@@ -12,7 +12,7 @@ class StatusesTableSeeder extends Seeder
      */
     public function run()
     {
-        $user_ids = ['1','2','3'];
+        $user_ids = ['1', '2', '3'];
         //app 就是new一个实例
         $faker = app(Faker\Generator::class);
 
