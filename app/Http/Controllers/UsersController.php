@@ -4,14 +4,26 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\User;
+use Auth;
 
 class UsersController extends Controller
 {
     public function __construct()
     {
         $this->middleware('auth', [
-            'except' => ['show', 'create', 'store']
+            //除了show create store 其他要auth(登录)
+            'except' => ['show', 'create', 'store','index']
         ]);
+        $this->middleware('guest', [
+            'only' => ['create']
+        ]);
+    }
+
+    //用户s的列表
+    public function index()
+    {
+        $users = User::paginate(8);
+        return view('users.index', compact('users'));
     }
     
     public function create()
@@ -25,7 +37,7 @@ class UsersController extends Controller
     }
 
     //注册账号
-    public function store(Request $request)
+    public function store(Request $request, User $user)
     {
         $this->validate($request, [
             'name' => 'required|unique:users|max:50',
@@ -51,12 +63,14 @@ class UsersController extends Controller
     //编辑个人信息
     public function edit(User $user)
     {
+        $this->authorize('update', $user);
         return view('users.edit', compact('user'));
     }
 
     //提交修改个人信息
     public function update(User $user, Request $request)
     {
+        $this->authorize('update', $user);
         $this->validate($request, [
             'name' => 'required|max:50',
             //密码不输就当不修改
@@ -71,5 +85,14 @@ class UsersController extends Controller
         $user->update($data);
         session()->flash('success', '个人资料更新成功！');
         return redirect()->route('users.show', $user->id);
+    }
+
+    public function destroy(User $user)
+    {
+        $this->authorize('destroy', $user);
+        //数据库删除
+        $user->delete();
+        session()->flash('success', '成功删除用户！');
+        return back();
     }
 }

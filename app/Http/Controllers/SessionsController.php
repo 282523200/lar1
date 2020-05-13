@@ -7,6 +7,14 @@ use Illuminate\Support\Facades\Auth;
 
 class SessionsController extends Controller
 {
+    public function __construct()
+    {
+        //create 要未登陆的访问
+        $this->middleware('guest', [
+            'only' => ['create']
+        ]);
+    }
+
     public function create()
     {
         return view('sessions.create');
@@ -23,7 +31,10 @@ class SessionsController extends Controller
         //数据库验证这个值 第二个参数true 5年 默认2小时 数据库字段remember_token保存
         if (Auth::attempt($credentials, $request->has('remember'))) {
             session()->flash('success', '欢迎回来！');
-            return redirect()->route('users.show', [Auth::user()]);
+
+            $fallback = route('users.show', Auth::user());
+            //intended 跳到上次的地方 参数是默认值没有的化跳这个
+            return redirect()->intended($fallback);
         } else {
             session()->flash('danger', '很抱歉，您的邮箱和密码不匹配');
             return redirect()->back()->withInput();
