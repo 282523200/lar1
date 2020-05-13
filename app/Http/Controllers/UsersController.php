@@ -111,10 +111,8 @@ class UsersController extends Controller
 
     protected function sendEmailConfirmationTo($user)
     {
-        $view = 'emails.confirm';
-        $data = compact('user');
-
-
+        $view    = 'emails.confirm';
+        $data    = compact('user');
         $to      = $user->email;
         $subject = "感谢注册 Weibo 应用！请确认你的邮箱。";
 
