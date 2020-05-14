@@ -23,6 +23,7 @@ Route::get('login', 'SessionsController@create')->name('login');
 Route::post('login', 'SessionsController@store')->name('login');
 Route::delete('logout', 'SessionsController@destroy')->name('logout');
 
+
 //mail 激活
 Route::get('signup/confirm/{token}', 'UsersController@confirmEmail')->name('confirm_email');
 
@@ -34,6 +35,18 @@ Route::post('password/email', 'Auth\ForgotPasswordController@sendResetLinkEmail'
 Route::get('password/reset/{token}', 'Auth\ResetPasswordController@showResetForm')->name('password.reset');
 Route::post('password/reset', 'Auth\ResetPasswordController@reset')->name('password.update');
 
+
 //微博
 //只能添加和删除
 Route::resource('statuses', 'StatusesController', ['only' => ['store', 'destroy']]);
+
+
+//关注的用户表
+Route::get('/users/{user}/followings', 'UsersController@followings')->name('users.followings');
+//粉丝表
+Route::get('/users/{user}/followers', 'UsersController@followers')->name('users.followers');
+
+//加入关注
+Route::post('/users/followers/{user}', 'FollowersController@store')->name('followers.store');
+//取消关注
+Route::delete('/users/followers/{user}', 'FollowersController@destroy')->name('followers.destroy');

@@ -2,17 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\User;
 use Auth;
 use Mail;
+use App\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class UsersController extends Controller
 {
-    
     public function __construct()
     {
-        
         $this->middleware('auth', [
             //除了show create store 其他要auth(登录)
             'except' => ['show', 'create', 'store', 'index', 'confirmEmail']
@@ -123,5 +122,19 @@ class UsersController extends Controller
             $message->to($to)
                 ->subject($subject);
         });
+    }
+
+    public function followings(User $user)
+    {
+        $users = $user->followings()->paginate(30);
+        $title = $user->name . '关注的人';
+        return view('users.show_follow', compact('users', 'title'));
+    }
+
+    public function followers(User $user)
+    {
+        $users = $user->followers()->paginate(30);
+        $title = $user->name . '的粉丝';
+        return view('users.show_follow', compact('users', 'title'));
     }
 }
